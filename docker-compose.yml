@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo-container
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    ports:
+      - "27017:27017"
+
+  web:
+    image: js-app:alpine-basic
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: js-app-container
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/todo_db
+    depends_on:
+      - mongo
+
+volumes:
+  mongo-data:
+    driver: local
